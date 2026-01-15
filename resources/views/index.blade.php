@@ -1,8 +1,13 @@
-hello guys!!
-<br>
+@extends('layouts.app')
 
-@isset($name)
+@section('title', 'The List of Task!')
+
+@section('content')
+    @forelse ($tasks as $task )
     <div>
-        The name is {{ $name }}
+        <a href="{{ route('tasks.show', ['id' => $task->id]) }}">{{ $task->title }}</a>
     </div>
-@endisset
+    @empty
+    <div>No tasks available.</div>
+    @endforelse
+@endsection
