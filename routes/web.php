@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Task;
 
@@ -72,27 +73,22 @@ Route::get('/tasks', function () {
     ]);
 })->name('tasks.index');
 //============================================
+Route::view('/tasks/create', 'create')
+    ->name('create');
+//============================================
 Route::get('/tasks/{id}', function ($id) {
 
     return view('show', ['task' => Task::findOrFail($id)]);
 })->name('tasks.show');
 //============================================
+Route::post('/tasks', function (Request $request) {
+    dd($request->all());
+})->name('tasks.store');
+//============================================
 
 
-// //Route with usable name!
-// Route::get('/hello', function () {
-//     return 'Hello';
-// })->name('hello-route');
 
-// //redirect to previous route name!
-// Route::get('/hallo', function () {
-//     return redirect()->route('hello-route');
-// });
 
-// //Route with Parameters
-// Route::get('/greet/{name}', function ($name) {
-//     return 'Hello ' . $name . '!';
-// });
 
 //Custom not found route!
 Route::fallback(function () {
