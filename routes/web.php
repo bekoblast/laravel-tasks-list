@@ -1,4 +1,5 @@
 <?php
+use App\Http\Requests\TaskRequest;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -62,28 +63,63 @@ use App\Models\Task;
 //-----------------------------------
 
 //============================================
+
+//Home Page
 Route::get('/', function () {
     return redirect()->route('tasks.index');
 });
 //============================================
+
+//Show All Tasks.
 Route::get('/tasks', function () {
     return view('index', [
-        //'tasks' => Task::all() //this is for getting all the data!
-        'tasks' => Task::latest()->where('completed', true)->get()
+        'tasks' => Task::all() //this is for getting all the data!
+        //'tasks' => Task::latest()->where('completed', true)->get()
     ]);
 })->name('tasks.index');
 //============================================
+
+//Task Create Page.
 Route::view('/tasks/create', 'create')
     ->name('create');
 //============================================
-Route::get('/tasks/{id}', function ($id) {
 
-    return view('show', ['task' => Task::findOrFail($id)]);
+//Task Edit Page.
+Route::get('/tasks/{task}/edit', function (Task $task) {
+
+    return view('edit', ['task' => $task]);
+})->name('tasks.edit');
+//============================================
+
+//Single Task Details
+Route::get('/tasks/{task}', function (Task $task) {
+
+    return view('show', ['task' => $task]);
 })->name('tasks.show');
 //============================================
-Route::post('/tasks', function (Request $request) {
-    dd($request->all());
+
+//Task Creation & Saving to DB
+Route::post('/tasks', function (TaskRequest $request) {
+    $data = $request->validated();
+    $task = Task::create($data); //this method is called Mass assignment!
+
+    //id is given to $task object after using save()!!
+    return redirect()->route('tasks.show', ['task' => $task->id])
+        ->with('success', 'Task created successfully!');
 })->name('tasks.store');
+//============================================
+
+//Task Updating & Saving to DB
+Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) { //Laravel will fetch the id from the url, and will assgin it automatically to the declared $id!
+    $data = $request->validated();
+    $task->update($data);
+
+    //id is given to $task object after using save()!!
+    return redirect()->route('tasks.show', ['task' => $task->id])
+        ->with('success', 'Task updated successfully!');
+})->name('tasks.update');
+//============================================
+
 //============================================
 
 

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laravel 12 Task List App</title>
+
+    @yield('styles')
 </head>
 <body>
     <h1>
@@ -11,6 +13,12 @@
     </h1>
 
     <div>
+        @if (session()->has('success'))
+            <div style="color: green;">
+                {{ session('success') }}
+            </div>
+
+        @endif
         @yield('content')
     </div>
 </body>
