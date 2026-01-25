@@ -73,15 +73,14 @@ Route::get('/', function () {
 //Show All Tasks.
 Route::get('/tasks', function () {
     return view('index', [
-        'tasks' => Task::all() //this is for getting all the data!
-        //'tasks' => Task::latest()->where('completed', true)->get()
+        'tasks' => Task::latest()->paginate(10) //this is for getting all latest data with pagination!!
     ]);
 })->name('tasks.index');
 //============================================
 
 //Task Create Page.
 Route::view('/tasks/create', 'create')
-    ->name('create');
+    ->name('tasks.create');
 //============================================
 
 //Task Edit Page.
@@ -103,7 +102,7 @@ Route::post('/tasks', function (TaskRequest $request) {
     $data = $request->validated();
     $task = Task::create($data); //this method is called Mass assignment!
 
-    //id is given to $task object after using save()!!
+    //id is given to $task object after using create()!!
     return redirect()->route('tasks.show', ['task' => $task->id])
         ->with('success', 'Task created successfully!');
 })->name('tasks.store');
@@ -119,7 +118,18 @@ Route::put('/tasks/{task}', function (Task $task, TaskRequest $request) { //Lara
         ->with('success', 'Task updated successfully!');
 })->name('tasks.update');
 //============================================
+Route::delete('/tasks/{task}', function (Task $task) {
+    $task->delete();
 
+    return redirect()->route('tasks.index')
+        ->with('success', 'Task deleted successfully!');
+})->name('tasks.destroy');
+//============================================
+Route::put('/tasks/{task}/toggle-completed', function (Task $task) {
+    $task->toggleCompleted();
+
+    return redirect()->back()->with('success', 'Task Status updated successfully!');
+})->name('tasks.toggle-complete');
 //============================================
 
 
